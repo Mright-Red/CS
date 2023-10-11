@@ -5,5 +5,5 @@
 - [Final Project](https://github.com/mancuoj/watchlist)
 - [CS50P](https://github.com/mancuoj/CS50P)
 
-# CS61A
-fall 2022
+# UC Berkeley CS61A
+- fall 2022
