@@ -1,0 +1,7 @@
+# Python-specific ignores
+
+# IDE/Editor specific ignores
+.vscode/
+
+# Dependency management files
+venv/
