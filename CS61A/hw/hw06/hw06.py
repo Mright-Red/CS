@@ -34,9 +34,11 @@ class Mint:
 
     def create(self, coin):
         "*** YOUR CODE HERE ***"
+        return coin(self.year)
 
     def update(self):
         "*** YOUR CODE HERE ***"
+        self.year = Mint.present_year
 
 
 class Coin:
@@ -47,6 +49,7 @@ class Coin:
 
     def worth(self):
         "*** YOUR CODE HERE ***"
+        return self.cents + max(0, self.year - Mint.present_year - 50)
 
 
 class Nickel(Coin):
@@ -74,6 +77,10 @@ def store_digits(n):
     >>> link1 = Link(3, Link(Link(4), Link(5, Link(6))))
     """
     "*** YOUR CODE HERE ***"
+    if n == 0:
+        return Link.empty
+    else:
+        return Link(n % 10, store_digits(n // 10))
 
 
 def deep_map_mut(func, lnk):
@@ -94,6 +101,9 @@ def deep_map_mut(func, lnk):
     <9 <16> 25 36>
     """
     "*** YOUR CODE HERE ***"
+    if lnk is not Link.empty:
+        lnk.first = func(lnk.first)
+        deep_map_mut(func, lnk.rest)
 
 
 def two_list(vals, counts):
@@ -116,6 +126,16 @@ def two_list(vals, counts):
     Link(1, Link(1, Link(3, Link(3, Link(2)))))
     """
     "*** YOUR CODE HERE ***"
+    def helper(i):
+        if i == len(vals):
+            return Link.empty
+        else:
+            return Link(
+                vals[i], helper(i) if counts[i] > 1 else two_list(
+                    vals, counts[1:])
+            )
+
+    return helper(0)
 
 
 class VirFib():
@@ -145,12 +165,17 @@ class VirFib():
 
     def next(self):
         "*** YOUR CODE HERE ***"
+        return (
+            VirFib(self.value + 1)
+            if self.value == 0
+            else VirFib(self.value + self.prev)
+        )
 
     def __repr__(self):
         return "VirFib object, value " + str(self.value)
 
 
-def is_bst(t):
+def is_bst(t, low=float("-inf"), high=float("inf")):
     """Returns True if the Tree t has the structure of a valid BST.
 
     >>> t1 = Tree(6, [Tree(2, [Tree(1), Tree(4)]), Tree(7, [Tree(7), Tree(8)])])
@@ -176,6 +201,15 @@ def is_bst(t):
     False
     """
     "*** YOUR CODE HERE ***"
+    if t.is_leaf():
+        return True
+    elif len(t.branches) == 2:
+        left, right = t.branches
+        if not is_bst(left, low, t.root) or not is_bst(right, t.root, high):
+            return False
+        return low <= left.root <= t.root <= right.root <= high
+    else:
+        return False
 
 
 class Link:

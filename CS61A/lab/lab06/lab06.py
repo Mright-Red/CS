@@ -30,6 +30,14 @@ def insert_items(lst, entry, elem):
     True
     """
     "*** YOUR CODE HERE ***"
+    index = 0
+    while index < len(lst):
+        if lst[index] == entry:
+            lst.insert(index + 1, elem)
+            index += 2
+        else:
+            index += 1
+    return lst
 
 
 def count_occurrences(t, n, x):
@@ -53,6 +61,15 @@ def count_occurrences(t, n, x):
     2
     """
     "*** YOUR CODE HERE ***"
+    count = 0  # 初始化计数器
+    for _ in range(n):  # 遍历前n个元素
+        try:
+            element = next(t)  # 获取迭代器的下一个元素
+            if element == x:  # 如果元素等于x，增加计数
+                count += 1
+        except StopIteration:
+            break  # 迭代器遍历完，退出循环
+    return count  # 返回x出现的次数
 
 
 def repeated(t, k):
@@ -78,3 +95,17 @@ def repeated(t, k):
     """
     assert k > 1
     "*** YOUR CODE HERE ***"
+
+    current_element = None  # 初始化当前元素
+    current_count = 0  # 初始化当前计数
+
+    for element in t:  # 遍历迭代器的元素
+        if element == current_element:  # 如果元素等于当前元素
+            current_count += 1  # 增加计数
+            if current_count == k:  # 如果计数等于k，找到了目标元素
+                return element
+        else:
+            current_element = element  # 更新当前元素
+            current_count = 1  # 重置计数
+
+    return None  # 如果没有找到连续出现k次的元素，返回None

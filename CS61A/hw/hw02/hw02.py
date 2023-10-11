@@ -1,12 +1,16 @@
 from operator import add, mul
 
-square = lambda x: x * x
 
-identity = lambda x: x
+def square(x): return x * x
 
-triple = lambda x: 3 * x
 
-increment = lambda x: x + 1
+def identity(x): return x
+
+
+def triple(x): return 3 * x
+
+
+def increment(x): return x + 1
 
 
 HW_SOURCE_FILE = __file__
@@ -31,7 +35,13 @@ def product(n, term):
     >>> product(3, triple)    # 1*3 * 2*3 * 3*3
     162
     """
-    "*** YOUR CODE HERE ***"
+    result = 1
+    for i in range(1, n + 1):
+        result *= term(i)
+    return result
+
+
+print("ans1=", product(3, square))
 
 
 def accumulate(merger, start, n, term):
@@ -58,7 +68,13 @@ def accumulate(merger, start, n, term):
     >>> accumulate(lambda x, y: (x + y) % 17, 19, 20, square)
     16
     """
-    "*** YOUR CODE HERE ***"
+    result = start
+    for i in range(1, n + 1):
+        result = merger(result, term(i))
+    return result
+
+
+print("ans2:", accumulate(add, 0, 5, identity))
 
 
 def summation_using_accumulate(n, term):
@@ -75,7 +91,17 @@ def summation_using_accumulate(n, term):
     >>> [type(x).__name__ for x in ast.parse(inspect.getsource(summation_using_accumulate)).body[0].body]
     ['Expr', 'Return']
     """
-    "*** YOUR CODE HERE ***"
+    result = 0
+    for i in range(n + 1):
+        result += term(i)
+    return result
+
+
+print(
+    "ans3:",
+    summation_using_accumulate(5, square),
+    summation_using_accumulate(5, triple),
+)
 
 
 def product_using_accumulate(n, term):
@@ -92,4 +118,7 @@ def product_using_accumulate(n, term):
     >>> [type(x).__name__ for x in ast.parse(inspect.getsource(product_using_accumulate)).body[0].body]
     ['Expr', 'Return']
     """
-    "*** YOUR CODE HERE ***"
+    return accumulate(lambda x, y: x * y, 1, n, term)
+
+
+print(product_using_accumulate(4, square))

@@ -64,13 +64,13 @@ def end(s):
 def planet(mass):
     """Construct a planet of some mass."""
     assert mass > 0
-    "*** YOUR CODE HERE ***"
+    return ["planet", mass]
 
 
 def mass(w):
     """Select the mass of a planet."""
     assert is_planet(w), 'must call mass on a planet'
-    "*** YOUR CODE HERE ***"
+    return w[1]
 
 
 def is_planet(w):
@@ -83,7 +83,7 @@ def examples():
                arm(2, planet(1)))
     u = mobile(arm(5, planet(1)),
                arm(1, mobile(arm(2, planet(3)),
-                              arm(3, planet(2)))))
+                             arm(3, planet(2)))))
     v = mobile(arm(4, t), arm(2, u))
     return (t, u, v)
 
@@ -130,7 +130,17 @@ def balanced(m):
     >>> check(HW_SOURCE_FILE, 'balanced', ['Index'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    if is_planet(m):
+        return True
+
+    left_end, right_end = end(left(m)), end(right(m))
+    torque_left = length(left(m)) * total_weight(left_end)
+    torque_right = length(right(m)) * total_weight(right_end)
+
+    if torque_left != torque_right:
+        return False
+
+    return balanced(left_end) and balanced(right_end)
 
 
 def totals_tree(m):
@@ -162,7 +172,16 @@ def totals_tree(m):
     >>> check(HW_SOURCE_FILE, 'totals_tree', ['Index'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    if is_planet(m):
+        return tree(total_weight(m))
+
+    else:
+        left, right = left(m), right(m)
+        return tree(total_weight(m), [totals_tree(end(left)), totals_tree(end(right))])
+
+
+def tree(label, branches=[]):
+    return [label] + list(branches)
 
 
 def replace_loki_at_leaf(t, lokis_replacement):
@@ -194,7 +213,11 @@ def replace_loki_at_leaf(t, lokis_replacement):
     >>> laerad == yggdrasil # Make sure original tree is unmodified
     True
     """
-    "*** YOUR CODE HERE ***"
+    if is_leaf(t) and label(t) == "loki":
+        return tree(lokis_replacement)
+    else:
+        bs = [replace_loki_at_leaf(b, lokis_replacement) for b in branches(t)]
+        return tree(label(t), bs)
 
 
 def has_path(t, word):
@@ -228,7 +251,14 @@ def has_path(t, word):
     False
     """
     assert len(word) > 0, 'no path for empty word.'
-    "*** YOUR CODE HERE ***"
+    if len(word) == 0:
+        return True
+    elif label(t) != word[0]:
+        return False
+    elif is_leaf(t):
+        return len(word) == 1
+    else:
+        return any([has_path(b, word[1:]) for b in branches(t)])
 
 
 def str_interval(x):
@@ -252,12 +282,12 @@ def interval(a, b):
 
 def lower_bound(x):
     """Return the lower bound of interval x."""
-    "*** YOUR CODE HERE ***"
+    return x[0]
 
 
 def upper_bound(x):
     """Return the upper bound of interval x."""
-    "*** YOUR CODE HERE ***"
+    return x[1]
 
 
 def str_interval(x):
@@ -286,7 +316,9 @@ def mul_interval(x, y):
 def sub_interval(x, y):
     """Return the interval that contains the difference between any value in x
     and any value in y."""
-    "*** YOUR CODE HERE ***"
+    lower = lower_bound(x) - upper_bound(y)
+    upper = upper_bound(x) - lower_bound(y)
+    return interval(lower, upper)
 
 
 def div_interval(x, y):

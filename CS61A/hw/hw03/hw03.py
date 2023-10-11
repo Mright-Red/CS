@@ -24,7 +24,17 @@ def num_eights(pos):
     ...       ['Assign', 'AnnAssign', 'AugAssign', 'NamedExpr', 'For', 'While'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    pos_str = str(pos)
+    count = 0
+    for char in pos_str:
+        if char == "8":
+            count += 1
+    return count
+
+
+print(num_eights(3))
+print(num_eights(8))
+print(num_eights(88888888))
 
 
 def pingpong(n):
@@ -60,7 +70,28 @@ def pingpong(n):
     ...       ['Assign', 'AnnAssign', 'AugAssign', 'NamedExpr'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    def helper(index, value, direction):
+        if index == n:
+            return value
+        if index % 8 == 0 or has_eight(index):
+            return helper(index + 1, value - direction, -direction)
+        else:
+            return helper(index + 1, value + direction, direction)
+
+    def has_eight(k):
+        if k < 8:
+            return False
+        elif k % 8 == 0 or k % 10 == 8:
+            return True
+        else:
+            return has_eight(k // 10)
+
+    return helper(1, 1, 1)
+
+
+print(pingpong(8))  # 8
+print(pingpong(10))  # 6
+print(pingpong(15))  # 1
 
 
 def next_larger_coin(coin):
@@ -116,10 +147,21 @@ def count_coins(change):
     >>> check(HW_SOURCE_FILE, 'count_coins', ['While', 'For'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    def count_ways(change, coin_index):
+        if change == 0:
+            return 1
+        if change < 0 or coin_index < 0:
+            return 0
+        without_current_coin = count_ways(change, coin_index - 1)
+        with_current_coin = count_ways(change - coins[coin_index], coin_index)
+        return without_current_coin + with_current_coin
+
+    coins = [1, 5, 10, 25]
+    return count_ways(change, len(coins) - 1)
 
 
-anonymous = False  # Change to True if you would like to remain anonymous on the final leaderboard.
+# Change to True if you would like to remain anonymous on the final leaderboard.
+anonymous = False
 
 
 def beaver(f):

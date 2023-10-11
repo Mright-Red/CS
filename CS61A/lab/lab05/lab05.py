@@ -1,3 +1,6 @@
+from math import sqrt
+
+
 def flatten(s):
     """Returns a flattened version of list s.
 
@@ -15,9 +18,6 @@ def flatten(s):
     [[1, [1, 1]], 1, [1, 1]]
     """
     "*** YOUR CODE HERE ***"
-
-
-from math import sqrt
 
 
 def distance(city_a, city_b):

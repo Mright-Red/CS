@@ -14,7 +14,22 @@ def lambda_curry2(func):
     3
     """
     "*** YOUR CODE HERE ***"
-    return ______
+    from operator import add, mul, mod
+
+    curried_add = lambda_curry2(add)
+    add_3 = curried_add(3)
+    result1 = add_3(5)
+    print(result1)
+
+    curried_mul = lambda_curry2(mul)
+    mul_5 = curried_mul(5)
+    result2 = mul_5(42)
+    print(result2)
+
+    result3 = lambda_curry2(mod)(123)(10)
+    print(result3)
+
+    return result1, result2, result3
 
 
 def lambda_curry2_syntax_check():
@@ -56,6 +71,25 @@ def count_cond(condition):
     8
     """
     "*** YOUR CODE HERE ***"
+    def count_condition_satisfied(N):
+        count = 0
+        for i in range(1, N + 1):
+            if condition(N, i):
+                count += 1
+        return count
+
+    return count_condition_satisfied
+
+
+count_factors = count_cond(lambda n, i: n % i == 0)
+print(count_factors(2))
+
+
+def is_prime(n, i): return count_factors(i) == 2
+
+
+count_primes = count_cond(is_prime)
+print(count_primes(2))
 
 
 def composer(f, g):

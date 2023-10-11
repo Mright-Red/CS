@@ -22,7 +22,11 @@ def roll_dice(num_rolls, dice=six_sided):
     assert type(num_rolls) == int, 'num_rolls must be an integer.'
     assert num_rolls > 0, 'Must roll at least once.'
     # BEGIN PROBLEM 1
-    "*** YOUR CODE HERE ***"
+    results = [dice() for _ in range(num_rolls)]  # 列表推导式
+
+    if 1 in results:
+        return 1
+    return sum(results)
     # END PROBLEM 1
 
 
@@ -33,7 +37,12 @@ def tail_points(opponent_score):
 
     """
     # BEGIN PROBLEM 2
-    "*** YOUR CODE HERE ***"
+    if opponent_score < 10:
+        return opponent_score
+    elif opponent_score >= 10 and opponent_score < 100:
+        return int(str(opponent_score)[-1])
+    else:
+        return int(str(opponent_score)[-2:])
     # END PROBLEM 2
 
 
@@ -50,7 +59,10 @@ def take_turn(num_rolls, opponent_score, dice=six_sided):
     assert num_rolls >= 0, 'Cannot roll a negative number of dice in take_turn.'
     assert num_rolls <= 10, 'Cannot roll more than 10 dice.'
     # BEGIN PROBLEM 3
-    "*** YOUR CODE HERE ***"
+    if num_rolls == 0:
+        return tail_points(opponent_score)
+    else:
+        return roll_dice(num_rolls, dice)
     # END PROBLEM 3
 
 
@@ -73,7 +85,15 @@ def square_update(num_rolls, player_score, opponent_score, dice=six_sided):
 
 
 # BEGIN PROBLEM 4
-"*** YOUR CODE HERE ***"
+def perfect_square(n):
+    root = int(sqrt(n))
+    return root * root == n
+
+
+def next_perfect_square(n):
+    """Find the next perfect square greater than n."""
+    root = int(sqrt(n)) + 1
+    return root * root
 # END PROBLEM 4
 
 
@@ -112,7 +132,16 @@ def play(strategy0, strategy1, update,
     """
     who = 0  # Who is about to take a turn, 0 (first) or 1 (second)
     # BEGIN PROBLEM 5
-    "*** YOUR CODE HERE ***"
+    score0, score1 = 0, 0
+    while score0 < GOAL and score1 < GOAL:
+        current_strategy = strategy0 if who == 0 else strategy1
+        current_update_function = square_update  # 引用
+        num_rolls = current_strategy(score0, score1)
+        if who == 0:
+            score0 = current_update_function(num_rolls, score0, score1)
+        else:
+            score1 = current_update_function(num_rolls, score1, score0)
+        who = 1 - who
     # END PROBLEM 5
     return score0, score1
 
@@ -137,7 +166,11 @@ def always_roll(n):
     """
     assert n >= 0 and n <= 10
     # BEGIN PROBLEM 6
-    "*** YOUR CODE HERE ***"
+
+    def strategy(current_score, opponent_score):
+        return n
+
+    return strategy
     # END PROBLEM 6
 
 
@@ -167,7 +200,21 @@ def is_always_roll(strategy, goal=GOAL):
     False
     """
     # BEGIN PROBLEM 7
-    "*** YOUR CODE HERE ***"
+    # 初始状态
+    initial_score0, initial_score1 = 0, 0
+    # 用于存储策略选择的投掷数量
+    chosen_rolls = set()
+
+    # 遍历可能的情况，例如，分数从0到目标分数
+    for score0 in range(goal + 1):
+        for score1 in range(goal + 1):
+            # 调用策略以获取投掷数量
+            num_rolls = strategy(score0, score1)
+            # 将投掷数量添加到集合中
+            chosen_rolls.add(num_rolls)
+
+    # 如果集合中只有一个元素，说明策略总是选择相同数量的投掷
+    return len(chosen_rolls) == 1
     # END PROBLEM 7
 
 
@@ -225,7 +272,8 @@ def run_experiments():
     six_sided_max = max_scoring_num_rolls(six_sided)
     print('Max scoring num rolls for six-sided dice:', six_sided_max)
 
-    print('always_roll(6) win rate:', average_win_rate(always_roll(6)))  # near 0.5
+    print('always_roll(6) win rate:',
+          average_win_rate(always_roll(6)))  # near 0.5
     print('catch_up win rate:', average_win_rate(catch_up))
     print('always_roll(3) win rate:', average_win_rate(always_roll(3)))
     print('always_roll(8) win rate:', average_win_rate(always_roll(8)))

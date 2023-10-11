@@ -11,6 +11,11 @@ def falling(n, k):
     1
     """
     "*** YOUR CODE HERE ***"
+    result = 1
+    for _ in range(k):
+        result *= n
+        n -= 1
+    return result
 
 
 def sum_digits(y):
@@ -27,6 +32,14 @@ def sum_digits(y):
     6
     """
     "*** YOUR CODE HERE ***"
+    y_str = str(y)
+
+    total = 0
+
+    for char in y_str:
+        total += int(char)
+
+    return total
 
 
 def double_eights(n):
@@ -45,3 +58,15 @@ def double_eights(n):
     False
     """
     "*** YOUR CODE HERE ***"
+    n_str = str(n)
+    count = 0
+    for char in n_str:
+        if char == "8":
+            count += 1
+        else:
+            count = 0
+
+        if count == 2:
+            return True
+
+    return False

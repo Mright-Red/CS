@@ -1,12 +1,16 @@
 from operator import add, mul
 
-square = lambda x: x * x
 
-identity = lambda x: x
+def square(x): return x * x
 
-triple = lambda x: 3 * x
 
-increment = lambda x: x + 1
+def identity(x): return x
+
+
+def triple(x): return 3 * x
+
+
+def increment(x): return x + 1
 
 
 def ordered_digits(x):
@@ -108,7 +112,7 @@ def div_by_primes_under(n):
     >>> div_by_primes_under(5)(1)
     False
     """
-    checker = lambda x: False
+    def checker(x): return False
     i = ____________________________
     while ____________________________:
         if not checker(i):
