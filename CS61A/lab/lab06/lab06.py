@@ -29,7 +29,12 @@ def insert_items(lst, entry, elem):
     ...       ['List', 'ListComp', 'Slice'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    # 使用enumerate遍历列表，以便同时获得元素和索引
+    for index, value in enumerate(lst):
+        if value == entry:
+            # 在entry的索引之后插入elem
+            lst.insert(index + 1, elem)
+    return lst
 
 
 def count_occurrences(t, n, x):
@@ -76,5 +81,19 @@ def repeated(t, k):
     >>> repeated(s2, 3)
     2
     """
-    assert k > 1
-    "*** YOUR CODE HERE ***"
+
+    current_value = None
+    count = 0
+
+    for value in t:
+        if value == current_value:
+            count += 1
+        else:
+            current_value = value
+            count = 1
+
+        if count == k:
+            return current_value
+
+    # 如果没有找到满足条件的值，返回None或者适合你的其他默认值
+    return None

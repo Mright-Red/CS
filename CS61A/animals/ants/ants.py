@@ -26,7 +26,9 @@ class Place:
         self.entrance = None  # A Place
         # Phase 1: Add an entrance to the exit
         # BEGIN Problem 2
-        "*** YOUR CODE HERE ***"
+        self.exit = exit
+        if exit:
+            exit.entrance = self
         # END Problem 2
 
     def add_insect(self, insect):
@@ -148,7 +150,11 @@ class Ant(Insect):
     def double(self):
         """Double this ants's damage, if it has not already been doubled."""
         # BEGIN Problem 12
-        "*** YOUR CODE HERE ***"
+        if not self.buffed:
+            self.damage = self.damage * 2
+        self.buffed = True
+        if self.is_container and self.ant_contained != None:
+            self.ant_contained.buff()
         # END Problem 12
 
 
@@ -165,7 +171,7 @@ class HarvesterAnt(Ant):
         gamestate -- The GameState, used to access game state information.
         """
         # BEGIN Problem 1
-        "*** YOUR CODE HERE ***"
+        gamestate.food += 1
         # END Problem 1
 
 
@@ -184,7 +190,14 @@ class ThrowerAnt(Ant):
         This method returns None if there is no such Bee (or none in range).
         """
         # BEGIN Problem 3 and 4
-        return random_bee(self.place.bees)  # REPLACE THIS LINE
+        now_place = self.place
+        dist = 0
+        while now_place != None and (not now_place.is_hive) and dist <= self.max_range:
+            if len(now_place.bees) != 0 and dist >= self.min_range:
+                return random_bee(now_place.bees)
+            dist += 1
+            now_place = now_place.entrance
+        return None
         # END Problem 3 and 4
 
     def throw_at(self, target):
@@ -199,7 +212,8 @@ class ThrowerAnt(Ant):
 
 def random_bee(bees):
     """Return a random bee from a list of bees, or return None if bees is empty."""
-    assert isinstance(bees, list), "random_bee's argument should be a list but was a %s" % type(bees).__name__
+    assert isinstance(
+        bees, list), "random_bee's argument should be a list but was a %s" % type(bees).__name__
     if bees:
         return random.choice(bees)
 
@@ -215,7 +229,8 @@ class ShortThrower(ThrowerAnt):
     food_cost = 2
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 4
-    implemented = False   # Change to True to view in the GUI
+    max_range = 3
+    implemented = True   # Change to True to view in the GUI
     # END Problem 4
 
 
@@ -226,7 +241,8 @@ class LongThrower(ThrowerAnt):
     food_cost = 2
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 4
-    implemented = False   # Change to True to view in the GUI
+    min_range = 5
+    implemented = True   # Change to True to view in the GUI
     # END Problem 4
 
 
@@ -253,7 +269,11 @@ class FireAnt(Ant):
         the additional damage if the fire ant dies.
         """
         # BEGIN Problem 5
-        "*** YOUR CODE HERE ***"
+        now_place = self.place
+        super().reduce_health(amount)
+        damage = amount + (self.damage if self.health == 0 else 0)
+        for bee in now_place.bees[:]:
+            bee.reduce_health(damage)
         # END Problem 5
 
 # BEGIN Problem 6
@@ -277,12 +297,13 @@ class ContainerAnt(Ant):
 
     def can_contain(self, other):
         # BEGIN Problem 8a
-        "*** YOUR CODE HERE ***"
+        return (not self.ant_contained) and (not other.is_container)
         # END Problem 8a
 
     def store_ant(self, ant):
         # BEGIN Problem 8a
-        "*** YOUR CODE HERE ***"
+        assert self.ant_contained is None
+        self.ant_contained = ant
         # END Problem 8a
 
     def remove_ant(self, ant):
@@ -302,7 +323,8 @@ class ContainerAnt(Ant):
 
     def action(self, gamestate):
         # BEGIN Problem 8a
-        "*** YOUR CODE HERE ***"
+        if self.ant_contained:
+            self.ant_contained.action(gamestate)
         # END Problem 8a
 
 
@@ -328,7 +350,9 @@ class Water(Place):
         """Add an Insect to this place. If the insect is not waterproof, reduce
         its health to 0."""
         # BEGIN Problem 10
-        "*** YOUR CODE HERE ***"
+        super().add_insect(insect)
+        if not insect.is_waterproof:
+            insect.reduce_health(insect.health)
         # END Problem 10
 
 # BEGIN Problem 11
@@ -339,7 +363,7 @@ class Water(Place):
 
 
 class QueenAnt(Ant):  # You should change this line
-# END Problem 12
+    # END Problem 12
     """The Queen of the colony. The game is over if a bee enters her place."""
 
     name = 'Queen'
@@ -356,7 +380,10 @@ class QueenAnt(Ant):  # You should change this line
         returns None otherwise. Remember to call the construct() method of the superclass!
         """
         # BEGIN Problem 12
-        "*** YOUR CODE HERE ***"
+        if not gamestate.has_queen:
+            gamestate.has_queen = True
+            return super().construct(gamestate)
+        return None
         # END Problem 12
 
     def action(self, gamestate):
@@ -364,7 +391,12 @@ class QueenAnt(Ant):  # You should change this line
         in her tunnel.
         """
         # BEGIN Problem 12
-        "*** YOUR CODE HERE ***"
+        super().action(gamestate)
+        now_place = self.place.exit
+        while now_place != None:
+            if now_place.ant != None:
+                now_place.ant.buff()
+            now_place = now_place.exit
         # END Problem 12
 
     def reduce_health(self, amount):
@@ -372,7 +404,8 @@ class QueenAnt(Ant):  # You should change this line
         remaining, signal the end of the game.
         """
         # BEGIN Problem 12
-        "*** YOUR CODE HERE ***"
+        super().reduce_health(amount)
+        ants_lose()
         # END Problem 12
 
 
@@ -470,7 +503,9 @@ class SlowThrower(ThrowerAnt):
     def throw_at(self, target):
 
         # BEGIN Problem EC
-        "*** YOUR CODE HERE ***"
+        if target:
+            target.slow(3)
+
         # END Problem EC
 
 
@@ -609,13 +644,11 @@ class GameState:
         self.food = food
         self.strategy = strategy
         self.beehive = beehive
+        self.has_queen = False
         self.ant_types = OrderedDict((a.name, a) for a in ant_types)
         self.dimensions = dimensions
         self.active_bees = []
         self.configure(beehive, create_places)
-        # BEGIN Problem 12
-        "*** YOUR CODE HERE ***"
-        # END Problem 12
 
     def configure(self, beehive, create_places):
         """Configure the places in the colony."""
@@ -629,7 +662,8 @@ class GameState:
                 place.entrance = beehive
                 self.bee_entrances.append(place)
         register_place(self.beehive, False)
-        create_places(self.base, register_place, self.dimensions[0], self.dimensions[1])
+        create_places(self.base, register_place,
+                      self.dimensions[0], self.dimensions[1])
 
     def simulate(self):
         """Simulate an attack on the ant colony (i.e., play the game)."""
