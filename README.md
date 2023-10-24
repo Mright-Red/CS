@@ -7,3 +7,6 @@
 
 # CS61A
 - fall 2022
+
+# CS61B
+- fall 2022
