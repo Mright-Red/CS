@@ -58,15 +58,15 @@ class Buffer:
 
     def current(self):
         """Return the current element, or None if none exists."""
-        while _________:
+        while self.more_on_line():
             try:
                 # BEGIN PROBLEM 1
-                "*** YOUR CODE HERE ***"
+                current_token = self.current_line[self.index]
                 # END PROBLEM 1
             except StopIteration:
                 self.current_line = ()
                 return None
-        return __________
+        return current_token
 
     def more_on_line(self):
         return self.index < len(self.current_line)
@@ -103,7 +103,7 @@ class LineReader:
         while self.lines:
             line = self.lines.pop(0).strip('\n')
             if (self.prompt is not None and line != "" and
-                not line.lstrip().startswith(self.comment)):
+                    not line.lstrip().startswith(self.comment)):
                 print(self.prompt + line)
                 self.prompt = ' ' * len(self.prompt)
             yield line
