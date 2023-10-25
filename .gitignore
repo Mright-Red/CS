@@ -2,6 +2,7 @@
 
 # IDE/Editor specific ignores
 .vscode/
+.pyc/
 
 # Dependency management files
 venv/
