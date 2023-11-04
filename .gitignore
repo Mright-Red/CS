@@ -3,5 +3,6 @@
 # IDE/Editor specific ignores
 .vscode/
 .pyc/
+.class/
 # Dependency management files
 venv/
