@@ -1,10 +1,10 @@
-package com.linear.singleLinked;
+package com.linear.sequenced;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
-public class Test {
+public class Test2 {
     public static void main(String[] args) {
-        LinkedList<String> sites = new LinkedList<String>();
+        ArrayList<String> sites = new ArrayList<String>();
         sites.add("Google");
         sites.add("Runoob");
         sites.add("Taobao");
